@@ -191,7 +191,7 @@ const githubCommand = (): CommandOutput => ({
   content: `
 🐙 GitHub Profile
 
-Username: raju9056
+Username: rajuyallappa
 URL: ${profile.personal.github}
 
 Featured Repositories:
