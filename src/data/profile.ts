@@ -2,10 +2,14 @@ export interface Skill {
   name: string;
   level: number;
   years?: number;
+  items: string[];
 }
+import type { SkillCategory } from "../types";
 
-export interface SkillCategory {
-  category: string;
+export interface Skill {
+  name: string;
+  level: number;
+  years?: number;
   items: string[];
 }
 
@@ -289,6 +293,7 @@ export const profile: Profile = {
 
   publications: [
     {
+      title: "Building Scalable RAG Knowledge Base",
       url: "https://medium.com/@rajuyallappa9056/why-your-rag-sucks-fixing-broken-retrieval-with-hybrid-search-reranking-contextual-chunking-336d47a8e7c0",
       type: "article",
     },

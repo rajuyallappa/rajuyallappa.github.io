@@ -1,3 +1,8 @@
+// Skill category type for profile
+export interface SkillCategory {
+  category: string;
+  items: string[];
+}
 // Tab types
 export interface Tab {
   id: string;
