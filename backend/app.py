@@ -4,8 +4,8 @@ import boto3
 import requests
 from botocore.exceptions import ClientError
 
-SECRET_NAME = os.environ.get("SECRET_NAME")
-ALLOWED_ORIGIN = os.environ.get("ALLOWED_ORIGIN", "*")
+API_KEY = os.environ.get("API_KEY")
+ALLOWED_ORIGIN = os.environ.get("https://raju9056.github.io/")
 
 _cached_api_key = None
 
@@ -14,24 +14,14 @@ def get_openai_api_key():
     global _cached_api_key
     if _cached_api_key:
         return _cached_api_key
-    if not SECRET_NAME:
-        raise RuntimeError("SECRET_NAME environment variable is not set")
-    client = boto3.client("secretsmanager")
     try:
-        resp = client.get_secret_value(SecretId=SECRET_NAME)
-    except ClientError as e:
-        raise
-    secret = resp.get("SecretString")
-    # If the secret is a JSON object with key "api_key", use that, otherwise treat the whole string as the key
-    try:
-        parsed = json.loads(secret)
-        key = parsed.get("api_key") or parsed.get("OPENAI_API_KEY") or parsed.get("openai_api_key")
-        if key:
+        if API_KEY:
             _cached_api_key = key
             return _cached_api_key
     except Exception:
         pass
-    _cached_api_key = secret
+
+    _cached_api_key = API_KEY
     return _cached_api_key
 
 
