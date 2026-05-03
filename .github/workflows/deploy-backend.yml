@@ -1,0 +1,50 @@
+name: Deploy Backend to AWS Lambda
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'backend/**'
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Install AWS SAM CLI
+        run: |
+          pip install --upgrade pip
+          pip install aws-sam-cli
+
+      - name: Build SAM application
+        working-directory: ./backend
+        run: sam build
+
+      - name: Package and deploy
+        working-directory: ./backend
+        env:
+          SECRET_NAME: ${{ secrets.AI_SECRET_NAME }}
+          ALLOWED_ORIGIN: ${{ secrets.ALLOWED_ORIGIN }}
+        run: |
+          sam deploy --stack-name personal-assistant-chatgpt-stack \
+            --s3-bucket ${{ secrets.SAM_S3_BUCKET }} \
+            --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
+            --parameter-overrides SecretName=${{ secrets.AI_SECRET_NAME }} AllowedOrigin=${{ secrets.ALLOWED_ORIGIN }}
+
+      - name: Output API endpoint
+        run: |
+          echo "Deployed - check CloudFormation outputs for API endpoint"

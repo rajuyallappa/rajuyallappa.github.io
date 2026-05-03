@@ -31,6 +31,8 @@ jobs:
         run: npm ci
         
       - name: Build
+        env:
+          VITE_AI_API_URL: "https://hd04vwiu3c.execute-api.us-east-1.amazonaws.com/prod/chat"
         run: npm run build
         
       - name: Upload artifact

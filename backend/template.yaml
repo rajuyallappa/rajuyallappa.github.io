@@ -1,0 +1,31 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Serverless API for Raju's portfolio AI chat
+
+Resources:
+  PersonalAssistantFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: personal-assistant-chatgpt
+      Handler: app.handler
+      Runtime: python3.10
+      Timeout: 30
+      MemorySize: 512
+      Environment:
+        Variables:
+          SECRET_NAME: "${SecretName}"
+          ALLOWED_ORIGIN: "${AllowedOrigin}"
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - secretsmanager:GetSecretValue
+              Resource: '*'
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /default/personal-assistant-chatgpt
+            Method: post

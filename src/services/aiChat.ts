@@ -3,7 +3,7 @@
 
 const API_URL =
   import.meta.env.VITE_AI_API_URL ||
-  "https://mfzpal29hf.execute-api.us-east-2.amazonaws.com/default/personal-assistant-chatgpt";
+  "https://hd04vwiu3c.execute-api.us-east-1.amazonaws.com/prod/chat";
 
 export interface ChatMessage {
   role: "user" | "assistant";
@@ -25,20 +25,15 @@ export async function sendMessage(
   conversationHistory: ChatMessage[] = []
 ): Promise<ChatResponse> {
   try {
-    const messages = [
-      ...conversationHistory.map((msg) => ({
-        role: msg.role,
-        content: msg.content,
-      })),
-      { role: "user", content: message },
-    ];
+    // Build history array expected by the backend and send current message separately
+    const history = conversationHistory.map((msg) => ({ role: msg.role, content: msg.content }));
 
     const response = await fetch(API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ messages }),
+      body: JSON.stringify({ message, history }),
     });
 
     if (!response.ok) {
